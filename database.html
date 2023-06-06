@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>database</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script>
+function hentTabell(tabell){   
+    fetch('/'+tabell)
+  .then((response) => response.json())
+  .then((response) => {
+      for (let i = 0; i < response.length; i++) {
+          table = document.getElementById(tabell)
+          var row = table.insertRow(table.length);
+          var cell1 = row.insertCell(0);
+          var cell2 = row.insertCell(1);
+          if(tabell == "brukere_has_prosjekter"){
+              cell1.innerHTML = response[i].brukere_navn;
+              cell2.innerHTML = response[i].prosjekter_navn;
+          }
+          else{
+              cell1.innerHTML = response[i].navn;
+              cell2.innerHTML = response[i].info;
+          }
+      }
+  })
+}
+hentTabell("brukere")
+hentTabell("prosjekter")
+hentTabell("brukere_has_prosjekter")
+
+
+function add(tabell){
+    request = new Request('/'+tabell+"add")
+    fetch(request, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        navn: document.getElementById(tabell + "_navn").value,
+        info: document.getElementById(tabell + "_info").value
+
+    }),
+    })
+    window.location.href="/"
+}
+
+</script>
+<h1>Bruker tabell</h1>
+<table id="brukere">
+    <tr>
+        <th>Navn</th>
+        <th>Beskrivelse</th>
+    </tr>
+    
+    <tr>
+        <th><input type="text" placeholder="navn" id="brukere_navn"></th>
+        <th><input type="text" placeholder="info" id="brukere_info">  
+        <button style="float: right;" onclick="add('brukere')">Legg til</button>
+        </th>
+    </tr>
+</table>
+
+<h1>Prosjekter tabell</h1>
+<table id="prosjekter">
+    <tr>
+    <th>Navn</th>
+    <th>Beskrivelse</th>
+    </tr>
+    <tr>
+        <th><input type="text" placeholder="navn" id="prosjekter_navn"></th>
+        <th><input type="text" placeholder="info" id="prosjekter_info">  
+        <button style="float: right;" onclick="add('prosjekter')">Legg til</button>
+        </th>
+    </tr>
+</table>
+
+<h1>Hvem jobber på vilke prosjekter</h1>
+<table id="brukere_has_prosjekter">
+    <tr>
+    <th>Bruker navn</th>
+    <th>Prosjekt navn</th>
+    </tr>
+    <tr>
+        <th><input type="text" placeholder="navn til bruker" id="brukere_has_prosjekter_navn"></th>
+        <th><input type="text" placeholder="navn til prosjekt" id="brukere_has_prosjekter_info">  
+        <button style="float: right;" onclick="add('brukere_has_prosjekter')">Legg til</button>
+        </th>
+    </tr>
+</table>
+ 
+</body>
+</html>
